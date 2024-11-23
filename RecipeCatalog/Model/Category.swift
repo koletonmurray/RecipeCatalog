@@ -11,14 +11,20 @@ import SwiftData
 @Model
 final class Category {
     @Attribute(.unique) var title: String
-    var ingredients: String
-    var instructions: String
-    var searchString: String
+    var specialCategory: Bool
     
-    init(title: String, ingredients: String, instructions: String) {
+    @Relationship(deleteRule: .nullify, inverse: \Recipe.categories) var recipes: [Recipe] = []
+
+    init(title: String, specialCategory: Bool = false) {
         self.title = title
-        self.ingredients = ingredients
-        self.instructions = instructions
-        self.searchString = title.lowercased() + " " + ingredients.lowercased() + " " + instructions.lowercased()
+        self.specialCategory = specialCategory
     }
+    
+//    var description: String {
+//        """
+//        Category:
+//        - Title: \(title)
+//        - Recipes: \(recipes.isEmpty ? "No recipes available" : recipes.map { $0.title }.joined(separator: ", "))
+//        """
+//    }
 }

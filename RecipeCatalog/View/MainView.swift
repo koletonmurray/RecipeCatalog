@@ -9,15 +9,21 @@ import SwiftUI
 
 struct MainView: View {
     
-    // ChatGPT helped me come up with a state var to help me
+    // ChatGPT helped me come up with a state var to help me contol column visibility (see onchange below)
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
-    @State private var selectedCategory: String?
-    @State private var selectedRecipe: String?
-    
+    @State private var selectedCategory: Category?
+    @State private var selectedRecipe: Recipe?
+    @Environment(RecipeViewModel.self) private var viewModel
+
     var body: some View {
         NavigationSplitView (columnVisibility: $columnVisibility) {
             CategoryListView(selectedCategory: $selectedCategory)
                 .navigationTitle("Categories")
+                .onAppear {
+                    if selectedCategory == nil {
+                        selectedCategory = viewModel.specialCategories.first(where: { $0.title == "All Recipes" })
+                    }
+                }
         } content: {
             if let category = selectedCategory {
                 RecipeListView(category: category, selectedRecipe: $selectedRecipe)
@@ -37,7 +43,7 @@ struct MainView: View {
             }
         }
         .onChange(of: selectedRecipe) {
-            // ChatGPT helped me with this to collapse sidebar when a recipe is selected
+            // ChatGPT helped me collapse sidebar when a recipe is selected
             if UIDevice.current.userInterfaceIdiom == .pad && (columnVisibility == .all || columnVisibility == .doubleColumn) {
                 columnVisibility = .detailOnly
             }

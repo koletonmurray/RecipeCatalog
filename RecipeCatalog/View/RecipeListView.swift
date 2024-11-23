@@ -8,27 +8,17 @@
 import SwiftUI
 
 struct RecipeListView: View {
-    let category: String
-    @Binding var selectedRecipe: String?
+    let category: Category
+    @State private var searchString: String = ""
+    @Binding var selectedRecipe: Recipe?
 
-    var recipes: [String] {
-        switch category {
-        case "Appetizers":
-            return ["Bruschetta", "Stuffed Mushrooms", "Spring Rolls"]
-        case "Main Dishes":
-            return ["Spaghetti Carbonara", "Grilled Chicken", "Beef Tacos"]
-        case "Desserts":
-            return ["Chocolate Cake", "Apple Pie", "Cheesecake"]
-        case "Drinks":
-            return ["Margarita", "Mojito", "Iced Tea"]
-        default:
-            return []
-        }
+    var recipes: [Recipe] {
+        category.recipes
     }
 
     var body: some View {
         List(recipes, id: \.self, selection: $selectedRecipe) { recipe in
-            Text(recipe)
+            Text(recipe.title)
         }
         .listStyle(.sidebar)
         .toolbar {
@@ -41,15 +31,16 @@ struct RecipeListView: View {
                 }
             }
         }
-        .navigationTitle(category)
+        .navigationTitle(category.title)
+        .searchable(text: $searchString)
 
     }
     
     private func addItem() {
         withAnimation {
-            let newItem = Recipe(title: "\(Date())", ingredients: "Some ingredients", instructions: "Some instructions")
+            //let newItem = Recipe(title: "\(Date())", ingredients: "Some ingredients", instructions: "Some instructions")
             //modelContext.insert(newItem)
-            print("Insert \(newItem)")
+            print("Insert Item")
         }
     }
 
@@ -61,8 +52,4 @@ struct RecipeListView: View {
             }
         }
     }
-}
-
-#Preview {
-    RecipeListView(category: "Appetizers", selectedRecipe: .constant(""))
 }

@@ -144,5 +144,5 @@ struct RecipeView: View {
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
-        }
+    }
 }

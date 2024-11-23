@@ -176,14 +176,6 @@ class DataPreloader {
             let managedGrilledChickenSalad = try modelContext.fetch(FetchDescriptor<Recipe>(
                 predicate: #Predicate { $0.title == "Grilled Chicken Salad" }
             )).first
-            
-            print("Managed Categories:")
-            print("  Dessert: \(managedDessert?.title ?? "Not Found")")
-            print("  Breakfast: \(managedBreakfast?.title ?? "Not Found")")
-
-            print("Managed Recipes:")
-            print("  Cookies: \(managedCookies?.title ?? "Not Found")")
-            print("  Pancakes: \(managedPancakes?.title ?? "Not Found")")
 
             managedCookies?.categories.append(managedDessert!)
             managedSpaghetti?.categories.append(managedDinner!)
@@ -192,13 +184,7 @@ class DataPreloader {
             managedGrilledChickenSalad?.categories.append(managedLunch!)
 
             try modelContext.save()
-            
-            let allCategories = try modelContext.fetch(FetchDescriptor<Category>())
-            for category in allCategories {
-                print("Category: \(category.title)")
-                print("Recipes: \(category.recipes.map { $0.title })")
-            }
-            
+                        
             print("Preloaded data successfully")
         } catch {
             print("Failed to preload data: \(error)")

@@ -37,6 +37,6 @@ final class Recipe {
         self.instructions = instructions
         self.additionalNotes = additionalNotes
         self.isFavorite = isFavorite
-        self.searchString = title.lowercased() + " " + ingredients.lowercased() + " " + instructions.lowercased()
+        self.searchString = title.lowercased() + " " + author.lowercased() + " " + ingredients.lowercased() + " " + instructions.lowercased() + " " + additionalNotes.lowercased()
     }
 }

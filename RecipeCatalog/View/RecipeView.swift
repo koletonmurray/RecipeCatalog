@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RecipeView: View {
     let recipe: Recipe
+    @Environment(RecipeViewModel.self) private var viewModel
 
     var body: some View {
         ScrollView {
@@ -16,6 +17,7 @@ struct RecipeView: View {
                 Text(recipe.title)
                     .font(.largeTitle)
                     .fontWeight(.bold)
+                    .foregroundStyle(.darkGreen)
                     .multilineTextAlignment(.leading)
                     .padding(.vertical, 10)
 
@@ -23,11 +25,11 @@ struct RecipeView: View {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Author: \(recipe.author)")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                         
                         Text("Date Added: \(recipe.dateAdded, formatter: dateFormatter)")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                     Spacer()
                 }
@@ -50,11 +52,10 @@ struct RecipeView: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Ingredients")
-                        .font(.title2)
-                        .fontWeight(.semibold)
+                        .title2Style()
                     Text(recipe.ingredients)
                         .font(.body)
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.textGray)
                 }
                 .padding(.horizontal, 10)
 
@@ -62,63 +63,86 @@ struct RecipeView: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Instructions")
-                        .font(.title2)
-                        .fontWeight(.semibold)
+                        .title2Style()
                     Text(recipe.instructions)
                         .font(.body)
-                        .foregroundColor(.primary)
+                        .foregroundStyle(.textGray)
                 }
                 .padding(.horizontal, 10)
+                
+                if recipe.additionalNotes.isEmpty == false {
+                    VStack(alignment: .leading) {
+                        Divider()
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Additional Notes")
+                                .title2Style()
+                            Text(recipe.additionalNotes)
+                                .font(.body)
+                                .foregroundStyle(.textGray)
+                        }
+                        .padding(10)
+                    }
+                }
 
                 Spacer(minLength: 20)
             }
             .frame(maxWidth: 500)
             .padding(.horizontal)
             .frame(maxWidth: .infinity)
+            .toolbar {
+                ToolbarItem {
+                    Button(action: {
+                        viewModel.toggleFavorite(for: recipe)
+                    }) {
+                        Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
+                            .foregroundStyle(.red)
+                    }
+                }
+            }
         }
         .navigationTitle(recipe.title)
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private func detailBox(title: String, subtitle: String? = nil, value: String) -> some View {
-            VStack {
-                Text(value)
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                VStack {
-                    Text(title)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    if let subtitle {
-                        Text(subtitle)
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity)
-        }
+    private var dateFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter
+    }
     
-        private func difficultyBox(difficulty: Int) -> some View {
+    private func detailBox(title: String, subtitle: String? = nil, value: String) -> some View {
+        VStack {
+            Text(value)
+                .font(.headline)
+                .fontWeight(.semibold)
             VStack {
-                HStack(spacing: 4) {
-                    ForEach(1...5, id: \.self) { index in
-                        Image(systemName: index <= difficulty ? "frying.pan.fill" : "frying.pan")
-                            .foregroundColor(index <= difficulty ? .blue : .gray)
-                            .font(.caption2)
-                    }
-                }
-                Text("Difficulty")
+                Text(title)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
+                if let subtitle {
+                    Text(subtitle)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
             }
-            .frame(maxWidth: .infinity)
         }
-
-        // Date Formatter
-        private var dateFormatter: DateFormatter {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .medium
-            return formatter
+        .frame(maxWidth: .infinity)
+    }
+    
+    private func difficultyBox(difficulty: Int) -> some View {
+        VStack {
+            HStack(spacing: 4) {
+                ForEach(1...5, id: \.self) { index in
+                    Image(systemName: index <= difficulty ? "frying.pan.fill" : "frying.pan")
+                        .foregroundStyle(index <= difficulty ? .darkPurple : .gray)
+                        .font(.caption2)
+                }
+            }
+            Text("Difficulty")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
         }
 }

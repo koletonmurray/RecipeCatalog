@@ -11,6 +11,7 @@ struct MainView: View {
     
     // ChatGPT helped me come up with a state var to help me contol column visibility (see onchange below)
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
+    @State private var hasInitializedCategory = false
     @State private var selectedCategory: Category?
     @State private var selectedRecipe: Recipe?
     @Environment(RecipeViewModel.self) private var viewModel
@@ -20,8 +21,9 @@ struct MainView: View {
             CategoryListView(selectedCategory: $selectedCategory)
                 .navigationTitle("Categories")
                 .onAppear {
-                    if selectedCategory == nil {
-                        selectedCategory = viewModel.specialCategories.first(where: { $0.title == "All Recipes" })
+                    if !hasInitializedCategory {
+                        selectedCategory = viewModel.specialCategories.first(where: { $0.title == RecipeAppConstants.recipesKey })
+                        hasInitializedCategory = true
                     }
                 }
         } content: {
@@ -30,7 +32,7 @@ struct MainView: View {
             } else {
                 Text("Select a Category")
                     .font(.largeTitle)
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.gray)
             }
                 
         } detail: {
@@ -39,7 +41,7 @@ struct MainView: View {
             } else {
                 Text("Select a Recipe")
                     .font(.largeTitle)
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.gray)
             }
         }
         .onChange(of: selectedRecipe) {

@@ -24,8 +24,8 @@ class DataPreloader {
             ))
             
             if existingSpecialCategories.isEmpty {
-                let allRecipes = Category(title: "All Recipes", specialCategory: true)
-                let favorites = Category(title: "Favorites", specialCategory: true)
+                let allRecipes = Category(title: RecipeAppConstants.recipesKey, specialCategory: true)
+                let favorites = Category(title: RecipeAppConstants.favoritesKey, specialCategory: true)
                 modelContext.insert(allRecipes)
                 modelContext.insert(favorites)
                 try modelContext.save()
@@ -58,6 +58,7 @@ class DataPreloader {
                 - 1 teaspoon Baking Soda
                 """,
                 instructions: "Mix ingredients, bake at 350°F for 10-12 minutes.",
+                additionalNotes: "For gluten-free, use gluten-free flour.",
                 isFavorite: true
             )
             
@@ -75,7 +76,8 @@ class DataPreloader {
                 - 1 lb Ground Beef
                 - 1/4 cup Parmesan Cheese (grated)
                 """,
-                instructions: "Boil pasta, cook beef, mix with sauce, serve with cheese."
+                instructions: "Boil pasta, cook beef, mix with sauce, serve with cheese.",
+                additionalNotes: "For gluten-free, substitute gluten-free pasta and likely cook for longer."
             )
             
             let pancakes = Recipe(

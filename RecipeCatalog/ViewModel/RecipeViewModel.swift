@@ -25,67 +25,90 @@ import SwiftData
     
     private(set) var categories: [Category] = []
     private(set) var specialCategories: [Category] = []
-    private(set) var favorites: [Recipe] = []
     private(set) var recipes: [Recipe] = []
-    // Search by keyword
     
     // MARK: - Model Functions
     
     func fetchData() {
         try? modelContext.save()
+        specialCategories = fetchSpecialCategories()
+        recipes = fetchAllRecipes()
         
-        do {
-            let recipeDescriptor = FetchDescriptor<Recipe>(sortBy: [SortDescriptor(\.title)])
-            let categoryDescriptor = FetchDescriptor<Category>(
-                predicate: #Predicate { !$0.specialCategory },
-                sortBy: [SortDescriptor(\.title)]
-            )
-            let specialCategoryDescriptor = FetchDescriptor<Category>(
-                predicate: #Predicate { $0.specialCategory },
-                sortBy: [SortDescriptor(\.title)]
-            )
-            let favoritesDescriptor = FetchDescriptor<Recipe>(
-                predicate: #Predicate { $0.isFavorite },
-                sortBy: [SortDescriptor(\.title)]
-            )
-            
-            recipes = try modelContext.fetch(recipeDescriptor)
-            categories = try modelContext.fetch(categoryDescriptor)
-            specialCategories = try modelContext.fetch(specialCategoryDescriptor)
-            favorites = try modelContext.fetch(favoritesDescriptor)
-            
-            updateSpecialCategories()
-            
-//            print("Fetched Recipes:")
-//            recipes.forEach {
-//                print($0)
-//                print("")
-//            }
-//
-//            print("Fetched Categories:")
-//            categories.forEach {
-//                print($0)
-//                print("")
-//            }
-//            print("")
-//
-//            print("Fetched Favorites:")
-//            print(favorites)
-
-        } catch {
-            print("Failed to load recipes")
-        }
+        updateAllRecipes()
+        updateFavoriteRecipes()
+        
+        categories = fetchRegularCategories()
+    }
+    
+    // MARK: - User Intents
+    
+    func toggleFavorite(for recipe: Recipe) {
+        recipe.isFavorite.toggle()
+        updateFavoriteRecipes()
     }
     
     // MARK: - Helper Functions
     
-    func updateSpecialCategories() {
-        if let allRecipesCategory = specialCategories.first(where: { $0.title == "All Recipes" }) {
+    func fetchAllRecipes() -> [Recipe] {
+        do {
+            let descriptorAllRecipes = FetchDescriptor<Recipe>(
+                sortBy: [SortDescriptor(\.title)]
+            )
+            return try modelContext.fetch(descriptorAllRecipes)
+        } catch {
+            print("Failed to fetch all recipes: \(error)")
+            return []
+        }
+    }
+    
+    func fetchFavoriteRecipes() -> [Recipe] {
+        do {
+            let descriptorFavoriteRecipes = FetchDescriptor<Recipe>(
+                predicate: #Predicate { $0.isFavorite },
+                sortBy: [SortDescriptor(\.title)]
+            )
+            return try modelContext.fetch(descriptorFavoriteRecipes)
+        } catch {
+            print("Failed to fetch favorites: \(error)")
+            return []
+        }
+    }
+    
+    func fetchRegularCategories() -> [Category] {
+        do {
+            let descriptorRegularCategories = FetchDescriptor<Category>(
+                predicate: #Predicate { !$0.specialCategory },
+                sortBy: [SortDescriptor(\.title)]
+            )
+            return try modelContext.fetch(descriptorRegularCategories)
+        } catch {
+            print("Failed to fetch regular categories: \(error)")
+            return []
+        }
+    }
+    
+    func fetchSpecialCategories() -> [Category] {
+        do {
+            let descriptorSpecialCategories = FetchDescriptor<Category>(
+                predicate: #Predicate { $0.specialCategory },
+                sortBy: [SortDescriptor(\.title)]
+            )
+            return try modelContext.fetch(descriptorSpecialCategories)
+        } catch {
+            print("Failed to fetch special categories: \(error)")
+            return []
+        }
+    }
+    
+    func updateAllRecipes() {
+        if let allRecipesCategory = specialCategories.first(where: { $0.title == RecipeAppConstants.recipesKey }) {
             allRecipesCategory.recipes = recipes
         }
+    }
 
-        if let favoritesCategory = specialCategories.first(where: { $0.title == "Favorites" }) {
-            favoritesCategory.recipes = favorites
+    func updateFavoriteRecipes() {
+        if let favoritesCategory = specialCategories.first(where: { $0.title == RecipeAppConstants.favoritesKey }) {
+            favoritesCategory.recipes = fetchFavoriteRecipes()
         }
     }
 }

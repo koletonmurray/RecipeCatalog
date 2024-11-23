@@ -21,7 +21,7 @@ struct WelcomeView: View {
             
             Text("Sizzle & Stir")
                 .font(.system(size: 48, weight: .bold, design: .rounded))
-                .foregroundColor(.darkGreen)
+                .foregroundStyle(.darkGreen)
             
             Spacer()
             
@@ -36,7 +36,7 @@ struct WelcomeView: View {
                     .fontWeight(.medium)
                     .padding()
                     .background(Color.darkGreen)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .cornerRadius(10)
             }
             .padding(.bottom, 40)

@@ -19,12 +19,4 @@ final class Category {
         self.title = title
         self.specialCategory = specialCategory
     }
-    
-//    var description: String {
-//        """
-//        Category:
-//        - Title: \(title)
-//        - Recipes: \(recipes.isEmpty ? "No recipes available" : recipes.map { $0.title }.joined(separator: ", "))
-//        """
-//    }
 }

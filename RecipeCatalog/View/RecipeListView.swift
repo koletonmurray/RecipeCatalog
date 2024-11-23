@@ -17,20 +17,20 @@ struct RecipeListView: View {
     }
 
     var body: some View {
-        List(recipes, id: \.self, selection: $selectedRecipe) { recipe in
+        List(recipes.sorted(by: {$0.title < $1.title}), id: \.self, selection: $selectedRecipe) { recipe in
             Text(recipe.title)
         }
         .listStyle(.sidebar)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                EditButton()
-            }
-            ToolbarItem {
-                Button(action: addItem) {
-                    Label("Add Recipe", systemImage: "plus.app")
-                }
-            }
-        }
+//        .toolbar {
+//            ToolbarItem(placement: .navigationBarTrailing) {
+//                EditButton()
+//            }
+//            ToolbarItem {
+//                Button(action: addItem) {
+//                    Label("Add Recipe", systemImage: "plus.app")
+//                }
+//            }
+//        }
         .navigationTitle(category.title)
         .searchable(text: $searchString)
 

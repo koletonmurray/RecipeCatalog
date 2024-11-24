@@ -15,6 +15,19 @@ struct MainView: View {
     @State private var selectedCategory: Category?
     @State private var selectedRecipe: Recipe?
     @Environment(RecipeViewModel.self) private var viewModel
+    
+    // ChatGPT did the following init to help me set the color of my navigationTitles to follow my color scheme
+    init() {
+        let appearance = UINavigationBarAppearance()
+        appearance.titleTextAttributes = [
+            .foregroundColor: UIColor.darkGreen
+        ]
+        appearance.largeTitleTextAttributes = [
+            .foregroundColor: UIColor.darkGreen
+        ]
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+    }
 
     var body: some View {
         NavigationSplitView (columnVisibility: $columnVisibility) {

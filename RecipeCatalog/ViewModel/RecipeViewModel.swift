@@ -34,8 +34,7 @@ import SwiftData
         
         updateAllRecipes()
         updateFavoriteRecipes()
-        
-        categories = fetchRegularCategories()
+        updateCategories()
     }
     
     // MARK: - User Intents
@@ -43,6 +42,25 @@ import SwiftData
     func toggleFavorite(for recipe: Recipe) {
         recipe.isFavorite.toggle()
         updateFavoriteRecipes()
+    }
+    
+    func createCategory(
+        categoryTitle: String
+    ) {
+        let newCategory = Category(
+            title: categoryTitle
+        )
+        
+        modelContext.insert(newCategory)
+        
+        do {
+            try modelContext.save()
+            print("Category successfully created!")
+        } catch {
+            print("Failed to save category: \(error)")
+        }
+        
+        updateCategories()
     }
     
     func createRecipe(
@@ -138,14 +156,18 @@ import SwiftData
     }
     
     func updateAllRecipes() {
-        if let allRecipesCategory = specialCategories.first(where: { $0.title == RecipeAppConstants.recipesKey }) {
-            allRecipesCategory.recipes = fetchAllRecipes()
+        if let index = specialCategories.firstIndex(where: { $0.title == RecipeAppConstants.recipesKey }) {
+            specialCategories[index].recipes = fetchAllRecipes()
         }
+    }
+    
+    func updateCategories() {
+        categories = fetchRegularCategories()
     }
 
     func updateFavoriteRecipes() {
-        if let favoritesCategory = specialCategories.first(where: { $0.title == RecipeAppConstants.favoritesKey }) {
-            favoritesCategory.recipes = fetchFavoriteRecipes()
+        if let index = specialCategories.firstIndex(where: { $0.title == RecipeAppConstants.favoritesKey }) {
+            specialCategories[index].recipes = fetchFavoriteRecipes()
         }
     }
 }

@@ -63,7 +63,7 @@ struct RecipeForm: View {
                         Stepper("", value: $calories, in: 0...1000, step: 10)
                             .labelsHidden()
                     }
-                    DifficuultyRating(difficulty: $difficulty)
+                    DifficultyRating(difficulty: $difficulty)
                     Toggle("Favorite: ", isOn: $isFavorite)
                         .foregroundStyle(.gray)
                 }
@@ -117,7 +117,7 @@ struct RecipeForm: View {
         }
     }
     
-    struct DifficuultyRating: View {
+    struct DifficultyRating: View {
         @Binding var difficulty: Int
 
         var body: some View {

@@ -8,6 +8,6 @@
 import Foundation
 
 struct RecipeAppConstants {
-    static let favoritesKey = "Favorite Recipes ❤️"
+    static let favoritesKey = "Favorite Recipes "
     static let recipesKey = "All Recipes 🥘"
 }

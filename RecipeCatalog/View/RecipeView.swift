@@ -25,11 +25,11 @@ struct RecipeView: View {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Author: \(recipe.author)")
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.textSecondary)
                         
                         Text("Date Added: \(recipe.dateAdded, formatter: dateFormatter)")
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.textSecondary)
                     }
                     Spacer()
                 }
@@ -96,11 +96,12 @@ struct RecipeView: View {
                         viewModel.toggleFavorite(for: recipe)
                     }) {
                         Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
-                            .foregroundStyle(.red)
+                            .foregroundStyle(.darkRed)
                     }
                 }
             }
         }
+        .background(.backgroundGray)
         .navigationTitle(recipe.title)
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -119,11 +120,11 @@ struct RecipeView: View {
             VStack {
                 Text(title)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textSecondary)
                 if let subtitle {
                     Text(subtitle)
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.textSecondary)
                 }
             }
         }
@@ -141,7 +142,7 @@ struct RecipeView: View {
             }
             Text("Difficulty")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.textSecondary)
         }
         .frame(maxWidth: .infinity)
     }

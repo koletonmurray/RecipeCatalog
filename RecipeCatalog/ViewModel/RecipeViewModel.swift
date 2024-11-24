@@ -25,14 +25,12 @@ import SwiftData
     
     private(set) var categories: [Category] = []
     private(set) var specialCategories: [Category] = []
-    private(set) var recipes: [Recipe] = []
     
     // MARK: - Model Functions
     
     func fetchData() {
         try? modelContext.save()
         specialCategories = fetchSpecialCategories()
-        recipes = fetchAllRecipes()
         
         updateAllRecipes()
         updateFavoriteRecipes()
@@ -44,6 +42,45 @@ import SwiftData
     
     func toggleFavorite(for recipe: Recipe) {
         recipe.isFavorite.toggle()
+        updateFavoriteRecipes()
+    }
+    
+    func createRecipe(
+        recipeName: String,
+        author: String,
+        cookTime: Int,
+        servings: Int,
+        difficulty: Int,
+        calories: Int,
+        ingredients: String,
+        instructions: String,
+        additionalNotes: String,
+        isFavorite: Bool
+    ) {
+        let newRecipe = Recipe(
+            title: recipeName,
+            author: author,
+            dateAdded: Date(),
+            minutesToCook: cookTime,
+            servings: servings,
+            difficulty: difficulty,
+            caloriesPerServing: calories,
+            ingredients: ingredients,
+            instructions: instructions,
+            additionalNotes: additionalNotes,
+            isFavorite: isFavorite
+        )
+        
+        modelContext.insert(newRecipe)
+        
+        do {
+            try modelContext.save()
+            print("Recipe successfully created!")
+        } catch {
+            print("Failed to save recipe: \(error)")
+        }
+        
+        updateAllRecipes()
         updateFavoriteRecipes()
     }
     
@@ -102,7 +139,7 @@ import SwiftData
     
     func updateAllRecipes() {
         if let allRecipesCategory = specialCategories.first(where: { $0.title == RecipeAppConstants.recipesKey }) {
-            allRecipesCategory.recipes = recipes
+            allRecipesCategory.recipes = fetchAllRecipes()
         }
     }
 

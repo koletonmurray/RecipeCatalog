@@ -21,7 +21,7 @@ struct WelcomeView: View {
             
             Text("Sizzle & Stir")
                 .font(.system(size: 48, weight: .bold, design: .rounded))
-                .foregroundStyle(.darkGreen)
+                .foregroundStyle(.alwaysDarkGreen)
             
             Spacer()
             
@@ -35,7 +35,7 @@ struct WelcomeView: View {
                     .font(.title)
                     .fontWeight(.medium)
                     .padding()
-                    .background(Color.darkGreen)
+                    .background(Color.alwaysDarkGreen)
                     .foregroundStyle(.white)
                     .cornerRadius(10)
             }
@@ -44,7 +44,7 @@ struct WelcomeView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color("BackgroundTan"))
+        .background(.alwaysBackgroundTan)
         .edgesIgnoringSafeArea(.all)
     }
 }

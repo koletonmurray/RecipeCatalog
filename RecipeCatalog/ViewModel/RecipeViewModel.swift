@@ -102,6 +102,19 @@ import SwiftData
         updateFavoriteRecipes()
     }
     
+    func deleteCategory(category: Category) {
+        modelContext.delete(category)
+        
+        do {
+            try modelContext.save()
+            print("Category successfully deleted!")
+            
+            updateCategories()
+        } catch {
+            print("Failed to delete category: \(error)")
+        }
+    }
+    
     func deleteRecipe(recipe: Recipe) {
         modelContext.delete(recipe)
         
@@ -113,6 +126,24 @@ import SwiftData
             updateFavoriteRecipes()
         } catch {
             print("Failed to delete recipe: \(error)")
+        }
+    }
+    
+    func updateCategory(
+        existingCategory: Category?,
+        categoryTitle: String
+    ) {
+        if let existingCategory {
+            existingCategory.title = categoryTitle
+            
+            do {
+                try modelContext.save()
+                print("Category successfully updated!")
+            } catch {
+                print("Failed to update category: \(error)")
+            }
+            
+            updateCategories()
         }
     }
     

@@ -9,8 +9,10 @@ import SwiftUI
 
 struct RecipeListView: View {
     let category: Category
+    @Binding var selectedCategory: Category?
     @Binding var selectedRecipe: Recipe?
     @State private var showAddRecipeForm = false
+    @State private var showEditCategoryForm = false
     @State private var typedSearchString: String = ""
 
     var recipes: [Recipe] {
@@ -30,6 +32,16 @@ struct RecipeListView: View {
         }
         .listStyle(.sidebar)
         .toolbar {
+            if (!category.specialCategory) {
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: {
+                        showEditCategoryForm = true
+                    }) {
+                        Image(systemName: "highlighter")
+                            .foregroundStyle(.primary)
+                    }
+                }
+            }
             ToolbarItem(placement: .primaryAction) {
                 Button(action: {
                     showAddRecipeForm = true
@@ -41,6 +53,9 @@ struct RecipeListView: View {
         }
         .sheet(isPresented: $showAddRecipeForm) {
             RecipeForm(recipe: nil, selectedRecipe: .constant(nil))
+        }
+        .sheet(isPresented: $showEditCategoryForm) {
+            CategoryForm(category: category, selectedCategory: $selectedCategory)
         }
         .navigationTitle(category.title)
         .searchable(text: $typedSearchString, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search (recipes, ingredients, etc.)")

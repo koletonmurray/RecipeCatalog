@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RecipeForm: View {
-    var recipe: Recipe?
+    let recipe: Recipe?
     @Environment(\.dismiss) private var dismiss
     @Environment(RecipeViewModel.self) private var viewModel
     @Binding var selectedRecipe: Recipe?

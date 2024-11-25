@@ -50,7 +50,7 @@ struct CategoryListView: View {
             }
         }
         .sheet(isPresented: $showCategoryForm) {
-            CategoryForm()
+            CategoryForm(category: nil, selectedCategory: .constant(nil))
         }
         .searchable(text: $searchString, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search (categories)")
     }

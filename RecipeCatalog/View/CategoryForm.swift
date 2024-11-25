@@ -8,9 +8,17 @@
 import SwiftUI
 
 struct CategoryForm: View {
+    let category: Category?
+    @Binding var selectedCategory: Category?
     @Environment(\.dismiss) private var dismiss
     @Environment(RecipeViewModel.self) private var viewModel
-    @State private var categoryTitle = ""
+    @State private var categoryTitle: String
+    
+    init(category: Category?, selectedCategory: Binding<Category?>) {
+        self.category = category
+        self._selectedCategory = selectedCategory
+        _categoryTitle = State(initialValue: category?.title ?? "")
+    }
     
     var body: some View {
         NavigationView {
@@ -18,8 +26,24 @@ struct CategoryForm: View {
                 Section(header: Text("Category Details")) {
                     TextField("Category Name", text: $categoryTitle)
                 }
+                
+                if (category != nil) {
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            viewModel.deleteCategory(category: category!)
+                            selectedCategory = nil
+                            dismiss()
+                        }) {
+                            Text("Delete Category")
+                                .foregroundStyle(.red)
+                                .font(.title3)
+                        }
+                        Spacer()
+                    }
+                }
             }
-            .navigationTitle("New Cateogry")
+            .navigationTitle(category == nil ? "New Category" : "Edit Category")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
@@ -31,9 +55,16 @@ struct CategoryForm: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
-                        viewModel.createCategory(
-                            categoryTitle: categoryTitle
-                        )
+                        if category != nil {
+                            viewModel.updateCategory(
+                                existingCategory: selectedCategory,
+                                categoryTitle: categoryTitle
+                            )
+                        } else {
+                            viewModel.createCategory(
+                                categoryTitle: categoryTitle
+                            )
+                        }
                         dismiss()
                     } label: {
                         Image(systemName: "checkmark.rectangle.fill")
@@ -43,8 +74,4 @@ struct CategoryForm: View {
             }
         }
     }
-}
-
-#Preview {
-    CategoryForm()
 }

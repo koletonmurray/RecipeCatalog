@@ -37,7 +37,7 @@ struct MainView: View {
                 }
         } content: {
             if let category = selectedCategory {
-                RecipeListView(category: category, selectedRecipe: $selectedRecipe)
+                RecipeListView(category: category, selectedCategory: $selectedCategory, selectedRecipe: $selectedRecipe)
             } else {
                 Text("Select a Category")
                     .font(.largeTitle)
@@ -60,10 +60,10 @@ struct MainView: View {
         .onChange(of: selectedRecipe) {
             // ChatGPT helped me collapse sidebar when a recipe is selected
             if UIDevice.current.userInterfaceIdiom == .pad {
-                if (columnVisibility == .all || columnVisibility == .doubleColumn) {
-                    columnVisibility = .detailOnly
-                } else if (selectedRecipe == nil) && (columnVisibility == .detailOnly) {
+                if (selectedRecipe == nil) {
                     columnVisibility = .all
+                } else if (columnVisibility == .all || columnVisibility == .doubleColumn) {
+                    columnVisibility = .detailOnly
                 }
             }
         }

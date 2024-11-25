@@ -17,7 +17,15 @@ struct CategoryListView: View {
         List(selection: $selectedCategory) {
             Section(header: Text("Essentials")){
                 ForEach(viewModel.specialCategories, id: \.self) { category in
-                    Text(category.title)
+                    HStack {
+                        if !category.sfSymbol.isEmpty {
+                            Image(systemName: category.sfSymbol)
+                                .foregroundStyle(category.symbolColor == "red" ? .darkRed : .darkGreen)
+                                .frame(width: 28, height: 28, alignment: .center)
+                        }
+                        Text(category.title)
+                        Spacer()
+                    }
                 }
             }
         
@@ -36,7 +44,8 @@ struct CategoryListView: View {
                 Button(action: {
                     showCategoryForm = true
                 }) {
-                    Label("New Category", systemImage: "folder.badge.plus")
+                    Image(systemName: "folder.badge.plus")
+                        .foregroundStyle(.primary)
                 }
             }
         }

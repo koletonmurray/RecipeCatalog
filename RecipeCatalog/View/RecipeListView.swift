@@ -9,9 +9,9 @@ import SwiftUI
 
 struct RecipeListView: View {
     let category: Category
-    @State private var typedSearchString: String = ""
     @Binding var selectedRecipe: Recipe?
-    @State private var showRecipeForm = false
+    @State private var showAddRecipeForm = false
+    @State private var typedSearchString: String = ""
 
     var recipes: [Recipe] {
         category.recipes
@@ -32,14 +32,15 @@ struct RecipeListView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button(action: {
-                    showRecipeForm = true
+                    showAddRecipeForm = true
                 }) {
-                    Label("New Recipe", systemImage: "document.badge.plus")
+                    Image(systemName: "document.badge.plus")
+                        .foregroundStyle(.primary)
                 }
             }
         }
-        .sheet(isPresented: $showRecipeForm) {
-            RecipeForm()
+        .sheet(isPresented: $showAddRecipeForm) {
+            RecipeForm(recipe: nil, selectedRecipe: .constant(nil))
         }
         .navigationTitle(category.title)
         .searchable(text: $typedSearchString, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search (recipes, ingredients, etc.)")

@@ -8,18 +8,35 @@
 import SwiftUI
 
 struct RecipeForm: View {
+    var recipe: Recipe?
     @Environment(\.dismiss) private var dismiss
     @Environment(RecipeViewModel.self) private var viewModel
-    @State private var recipeName = ""
-    @State private var author = ""
-    @State private var cookTime: Int = 5
-    @State private var servings: Int = 1
-    @State private var calories: Int = 0
-    @State private var difficulty: Int = 1
-    @State private var isFavorite = false
-    @State private var ingredients = ""
-    @State private var instructions = ""
-    @State private var additionalNotes = ""
+    @Binding var selectedRecipe: Recipe?
+    @State private var recipeName: String
+    @State private var author: String
+    @State private var cookTime: Int
+    @State private var servings: Int
+    @State private var calories: Int
+    @State private var difficulty: Int
+    @State private var isFavorite: Bool
+    @State private var ingredients: String
+    @State private var instructions: String
+    @State private var additionalNotes: String
+    
+    init(recipe: Recipe?, selectedRecipe: Binding<Recipe?>) {
+        self.recipe = recipe
+        self._selectedRecipe = selectedRecipe
+        _recipeName = State(initialValue: recipe?.title ?? "")
+        _author = State(initialValue: recipe?.author ?? "")
+        _cookTime = State(initialValue: recipe?.minutesToCook ?? 5)
+        _servings = State(initialValue: recipe?.servings ?? 1)
+        _calories = State(initialValue: recipe?.caloriesPerServing ?? 0)
+        _difficulty = State(initialValue: recipe?.difficulty ?? 1)
+        _isFavorite = State(initialValue: recipe?.isFavorite ?? false)
+        _ingredients = State(initialValue: recipe?.ingredients ?? "")
+        _instructions = State(initialValue: recipe?.instructions ?? "")
+        _additionalNotes = State(initialValue: recipe?.additionalNotes ?? "")
+    }
     
     var body: some View {
         NavigationView {
@@ -64,8 +81,19 @@ struct RecipeForm: View {
                             .labelsHidden()
                     }
                     DifficultyRating(difficulty: $difficulty)
-                    Toggle("Favorite: ", isOn: $isFavorite)
-                        .foregroundStyle(.gray)
+                    
+                    HStack {
+                        Text("Favorite:")
+                            .foregroundStyle(.gray)
+                        Spacer()
+                        Button(action: {
+                            isFavorite.toggle()
+                        }) {
+                            Image(systemName: isFavorite ? "heart.fill" : "heart")
+                                .foregroundStyle(.darkRed)
+                                .font(.title3)
+                        }
+                    }
                 }
                 
                 Section(header: Text("Ingredients:")) {
@@ -82,8 +110,24 @@ struct RecipeForm: View {
                     TextEditor(text: $additionalNotes)
                         .frame(minHeight: 100)
                 }
+                
+                if (recipe != nil) {
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            viewModel.deleteRecipe(recipe: recipe!)
+                            selectedRecipe = nil
+                            dismiss()
+                        }) {
+                            Text("Delete Recipe")
+                                .foregroundStyle(.red)
+                                .font(.title3)
+                        }
+                        Spacer()
+                    }
+                }
             }
-            .navigationTitle("New Recipe")
+            .navigationTitle(recipe == nil ? "New Recipe" : "Edit Recipe")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
@@ -95,18 +139,34 @@ struct RecipeForm: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
-                        viewModel.createRecipe(
-                            recipeName: recipeName,
-                            author: author,
-                            cookTime: cookTime,
-                            servings: servings,
-                            difficulty: difficulty,
-                            calories: calories,
-                            ingredients: ingredients,
-                            instructions: instructions,
-                            additionalNotes: additionalNotes,
-                            isFavorite: isFavorite
-                        )
+                        if recipe != nil {
+                            viewModel.updateRecipe(
+                                existingRecipe: recipe,
+                                recipeName: recipeName,
+                                author: author,
+                                cookTime: cookTime,
+                                servings: servings,
+                                difficulty: difficulty,
+                                calories: calories,
+                                ingredients: ingredients,
+                                instructions: instructions,
+                                additionalNotes: additionalNotes,
+                                isFavorite: isFavorite
+                            )
+                        } else {
+                            viewModel.createRecipe(
+                                recipeName: recipeName,
+                                author: author,
+                                cookTime: cookTime,
+                                servings: servings,
+                                difficulty: difficulty,
+                                calories: calories,
+                                ingredients: ingredients,
+                                instructions: instructions,
+                                additionalNotes: additionalNotes,
+                                isFavorite: isFavorite
+                            )
+                        }
                         dismiss()
                     } label: {
                         Image(systemName: "checkmark.rectangle.fill")
@@ -141,8 +201,4 @@ struct RecipeForm: View {
             .padding(.vertical, 5)
         }
     }
-}
-
-#Preview {
-    RecipeForm()
 }

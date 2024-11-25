@@ -19,12 +19,8 @@ struct MainView: View {
     // ChatGPT did the following init to help me set the color of my navigationTitles to follow my color scheme
     init() {
         let appearance = UINavigationBarAppearance()
-        appearance.titleTextAttributes = [
-            .foregroundColor: UIColor.darkGreen
-        ]
-        appearance.largeTitleTextAttributes = [
-            .foregroundColor: UIColor.darkGreen
-        ]
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.darkGreen]
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.darkGreen]
         UINavigationBar.appearance().standardAppearance = appearance
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -50,17 +46,25 @@ struct MainView: View {
                 
         } detail: {
             if let recipe = selectedRecipe {
-                RecipeView(recipe: recipe)
+                RecipeView(recipe: recipe, selectedRecipe: $selectedRecipe)
             } else {
-                Text("Select a Recipe")
-                    .font(.largeTitle)
-                    .foregroundStyle(.gray)
+                HStack {
+                    Text("Select a Recipe")
+                        .font(.largeTitle)
+                        .foregroundStyle(.gray)
+                    Spacer()
+                }
+                .padding(.horizontal, 30)
             }
         }
         .onChange(of: selectedRecipe) {
             // ChatGPT helped me collapse sidebar when a recipe is selected
-            if UIDevice.current.userInterfaceIdiom == .pad && (columnVisibility == .all || columnVisibility == .doubleColumn) {
-                columnVisibility = .detailOnly
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                if (columnVisibility == .all || columnVisibility == .doubleColumn) {
+                    columnVisibility = .detailOnly
+                } else if (selectedRecipe == nil) && (columnVisibility == .detailOnly) {
+                    columnVisibility = .all
+                }
             }
         }
     }

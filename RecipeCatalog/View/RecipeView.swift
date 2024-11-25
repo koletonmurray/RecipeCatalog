@@ -9,7 +9,9 @@ import SwiftUI
 
 struct RecipeView: View {
     let recipe: Recipe
+    @Binding var selectedRecipe: Recipe?
     @Environment(RecipeViewModel.self) private var viewModel
+    @State private var showEditRecipeForm = false
 
     var body: some View {
         ScrollView {
@@ -99,6 +101,17 @@ struct RecipeView: View {
                             .foregroundStyle(.darkRed)
                     }
                 }
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: {
+                        showEditRecipeForm = true
+                    }) {
+                        Image(systemName: "highlighter")
+                            .foregroundStyle(.primary)
+                    }
+                }
+            }
+            .sheet(isPresented: $showEditRecipeForm) {
+                RecipeForm(recipe: recipe, selectedRecipe: $selectedRecipe)
             }
         }
         .background(.backgroundGray)

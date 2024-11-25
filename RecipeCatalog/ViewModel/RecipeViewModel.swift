@@ -102,6 +102,57 @@ import SwiftData
         updateFavoriteRecipes()
     }
     
+    func deleteRecipe(recipe: Recipe) {
+        modelContext.delete(recipe)
+        
+        do {
+            try modelContext.save()
+            print("Recipe successfully deleted!")
+            
+            updateAllRecipes()
+            updateFavoriteRecipes()
+        } catch {
+            print("Failed to delete recipe: \(error)")
+        }
+    }
+    
+    func updateRecipe(
+        existingRecipe: Recipe?,
+        recipeName: String,
+        author: String,
+        cookTime: Int,
+        servings: Int,
+        difficulty: Int,
+        calories: Int,
+        ingredients: String,
+        instructions: String,
+        additionalNotes: String,
+        isFavorite: Bool
+    ) {
+        if let existingRecipe {
+            existingRecipe.title = recipeName
+            existingRecipe.author = author
+            existingRecipe.minutesToCook = cookTime
+            existingRecipe.servings = servings
+            existingRecipe.difficulty = difficulty
+            existingRecipe.caloriesPerServing = calories
+            existingRecipe.ingredients = ingredients
+            existingRecipe.instructions = instructions
+            existingRecipe.additionalNotes = additionalNotes
+            existingRecipe.isFavorite = isFavorite
+            
+            do {
+                try modelContext.save()
+                print("Recipe successfully updated!")
+            } catch {
+                print("Failed to update recipe: \(error)")
+            }
+            
+            updateAllRecipes()
+            updateFavoriteRecipes()
+        }
+    }
+    
     // MARK: - Helper Functions
     
     func fetchAllRecipes() -> [Recipe] {
@@ -126,6 +177,18 @@ import SwiftData
         } catch {
             print("Failed to fetch favorites: \(error)")
             return []
+        }
+    }
+    
+    func fetchRecipe(by name: String) -> Recipe? {
+        do {
+            let descriptorRecipe = FetchDescriptor<Recipe>(
+                predicate: #Predicate { $0.title == name }
+            )
+            return try modelContext.fetch(descriptorRecipe).first
+        } catch {
+            print("Failed to fetch recipe: \(error)")
+            return nil
         }
     }
     

@@ -24,8 +24,8 @@ class DataPreloader {
             ))
             
             if existingSpecialCategories.isEmpty {
-                let allRecipes = Category(title: RecipeAppConstants.recipesKey, specialCategory: true)
-                let favorites = Category(title: RecipeAppConstants.favoritesKey, specialCategory: true)
+                let allRecipes = Category(title: RecipeAppConstants.recipesKey, sfSymbol: "frying.pan", symbolColor: "", specialCategory: true)
+                let favorites = Category(title: RecipeAppConstants.favoritesKey, sfSymbol: "heart.fill", symbolColor: "red", specialCategory: true)
                 modelContext.insert(allRecipes)
                 modelContext.insert(favorites)
                 try modelContext.save()

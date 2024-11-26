@@ -129,17 +129,37 @@ import SwiftData
         }
     }
     
-    func removeRecipeFromCategory(recipe: Recipe, category: Category) {
-        recipe.categories.remove(at: recipe.categories.firstIndex(of: category)!)
-        
-        do {
-            try modelContext.save()
-            print("Recipe successfully removed from category!")
+    func removeCategoryFromRecipe(category: Category, recipe: Recipe) {
+        if let index = recipe.categories.firstIndex(of: category) {
+            recipe.categories.remove(at: index)
             
-            updateCategories()
-            updateAllRecipes()
-        } catch {
-            print("Failed to remove recipe from category: \(error)")
+            do {
+                try modelContext.save()
+                print("Recipe successfully removed from category!")
+                
+                updateCategories()
+            } catch {
+                print("Failed to remove recipe from category: \(error)")
+            }
+        } else {
+            print("Failed to remove recipe from category")
+        }
+    }
+    
+    func removeRecipeFromCategory(recipe: Recipe, category: Category) {
+        if let index = category.recipes.firstIndex(of: recipe) {
+            category.recipes.remove(at: index)
+            
+            do {
+                try modelContext.save()
+                print("Recipe successfully removed from category!")
+                
+                updateCategories()
+            } catch {
+                print("Failed to remove recipe from category: \(error)")
+            }
+        } else {
+            print("Failed to remove recipe from category")
         }
     }
     

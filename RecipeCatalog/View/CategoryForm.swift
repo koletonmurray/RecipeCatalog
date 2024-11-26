@@ -29,8 +29,9 @@ struct CategoryForm: View {
                     TextField("Category Name", text: $categoryTitle)
                 }
                 
-                if !recipes.isEmpty {
-                    Section(header: Text("Recipes in Category")) {
+                
+                Section(header: Text("Recipes in Category")) {
+                    if !recipes.isEmpty {
                         ForEach(recipes.sorted(by: { $0.title < $1.title }), id: \.self) { recipe in
                             HStack {
                                 Text(recipe.title)

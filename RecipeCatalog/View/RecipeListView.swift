@@ -23,19 +23,16 @@ struct RecipeListView: View {
         Group {
             if (recipes.isEmpty) {
                 VStack {
-                    Spacer()
                     Text("No recipes tagged")
-                        .font(.title)
-                        .foregroundStyle(.textSecondary)
-                        .fontWeight(.semibold)
-                    Text("Click the pencil icon to add a recipes to this category.")
+                        .font(.largeTitle)
+                        .foregroundStyle(.gray)
+                        .padding(.bottom, 10)
+                    Text("Click the pencil icon above to add recipes to this category.")
                         .font(.title3)
-                        .foregroundStyle(.textSecondary)
-                        .fontWeight(.medium)
-                        .padding(20)
-                    Spacer()
+                        .foregroundStyle(.gray)
                     Spacer()
                 }
+                .padding(30)
             } else {
                 List(selection: $selectedRecipe) {
                     Section(header: Text("Recipes")) {

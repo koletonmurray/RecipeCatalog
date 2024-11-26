@@ -24,6 +24,7 @@ struct RecipeForm: View {
     @State private var additionalNotes: String
     @State private var categories: [Category]
     @State private var showAddCategoryForm = false
+    @State private var showDeleteAlert = false
     
     init(recipe: Recipe?, selectedRecipe: Binding<Recipe?>) {
         self.recipe = recipe
@@ -163,9 +164,7 @@ struct RecipeForm: View {
                         HStack {
                             Spacer()
                             Button(action: {
-                                viewModel.deleteRecipe(recipe: recipe!)
-                                selectedRecipe = nil
-                                dismiss()
+                                showDeleteAlert = true
                             }) {
                                 Text("Delete Recipe")
                                     .foregroundStyle(.red)
@@ -226,6 +225,15 @@ struct RecipeForm: View {
             .sheet(isPresented: $showAddCategoryForm) {
                 if let recipe {
                     AddCategoryToRecipeForm(recipe: recipe, categories: $categories)
+                }
+            }
+            .alert("Would you like to delete this recipe \"\(recipeName)\"?", isPresented: $showDeleteAlert) {
+                Button("Cancel", role: .cancel) {}
+                Button("Delete", role: .destructive) {
+                    viewModel.deleteRecipe(recipe: recipe!)
+                    selectedRecipe = nil
+                    showDeleteAlert = false
+                    dismiss()
                 }
             }
         }

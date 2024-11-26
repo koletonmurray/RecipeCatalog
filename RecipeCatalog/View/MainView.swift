@@ -39,22 +39,34 @@ struct MainView: View {
             if let category = selectedCategory {
                 RecipeListView(category: category, selectedCategory: $selectedCategory, selectedRecipe: $selectedRecipe)
             } else {
-                Text("Select a Category")
-                    .font(.largeTitle)
-                    .foregroundStyle(.gray)
+                VStack (alignment: .leading) {
+                    HStack {
+                        Text("Select a Category")
+                            .font(.largeTitle)
+                            .foregroundStyle(.gray)
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                .padding(30)
             }
                 
         } detail: {
             if let recipe = selectedRecipe {
                 RecipeView(recipe: recipe, selectedCategory: $selectedCategory, selectedRecipe: $selectedRecipe)
             } else {
-                HStack {
-                    Text("Select a Recipe")
-                        .font(.largeTitle)
-                        .foregroundStyle(.gray)
+                VStack (alignment: .leading) {
+                    HStack {
+                        Text("Select a Recipe")
+                            .font(.largeTitle)
+                            .foregroundStyle(.gray)
+                        Spacer()
+                    }
+                    //.padding(.horizontal, 30)
+                    
                     Spacer()
                 }
-                .padding(.horizontal, 30)
+                .padding(30)
             }
         }
         .onChange(of: selectedRecipe) {

@@ -15,6 +15,7 @@ struct CategoryForm: View {
     @State private var categoryTitle: String
     @State private var recipes: [Recipe]
     @State private var showAddRecipeForm = false
+    @State private var showDeleteAlert = false
     
     init(category: Category?, selectedCategory: Binding<Category?>) {
         self.category = category
@@ -65,9 +66,7 @@ struct CategoryForm: View {
                         HStack {
                             Spacer()
                             Button(action: {
-                                viewModel.deleteCategory(category: category!)
-                                selectedCategory = nil
-                                dismiss()
+                                showDeleteAlert = true
                             }) {
                                 Text("Delete Category")
                                     .foregroundStyle(.red)
@@ -112,6 +111,16 @@ struct CategoryForm: View {
                     AddRecipeToCategoryForm(category: category, recipes: $recipes)
                 }
             }
+            .alert("Would you like to delete this category \"\(categoryTitle)\"?", isPresented: $showDeleteAlert) {
+                Button("Cancel", role: .cancel) {}
+                Button("Delete", role: .destructive) {
+                    viewModel.deleteCategory(category: category!)
+                    selectedCategory = nil
+                    showDeleteAlert = false
+                    dismiss()
+                }
+            }
+                
         }
     }
     

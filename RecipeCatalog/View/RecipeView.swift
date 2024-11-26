@@ -96,19 +96,23 @@ struct RecipeView: View {
                             .foregroundStyle(.darkGreen)
                             .fontWeight(.semibold)
                             .font(.title3)
-                        HStack {
-                            let categories = recipe.categories.sorted(by: { $0.title < $1.title })
-                            ForEach(categories, id: \.self) { category in
-                                // ChatGPT helped me use .last to properly place the commmas
-                                Text("\(category.title)\(category != categories.last ? ", " : "")")
+                        
+                        let columns = [GridItem(.adaptive(minimum: 100))]
+                                        
+                        LazyVGrid(columns: columns, alignment: .leading, spacing: 2) {
+                            ForEach(recipe.categories.sorted(by: { $0.title < $1.title }), id: \.self) { category in
+                                Text(category.title)
                                     .foregroundStyle(.textSecondary)
+                                    .padding(8)
+                                    .background(Color.gray.opacity(0.2))
+                                    .cornerRadius(8)
                                     .onTapGesture {
                                         selectedCategory = category
                                         selectedRecipe = nil
                                     }
                             }
-                            .multilineTextAlignment(.leading)
                         }
+                        .padding(5)
                     }
                     .padding(10)
                     

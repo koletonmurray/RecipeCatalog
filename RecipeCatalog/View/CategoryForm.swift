@@ -14,6 +14,7 @@ struct CategoryForm: View {
     @Environment(RecipeViewModel.self) private var viewModel
     @State private var categoryTitle: String
     @State private var recipes: [Recipe]
+    @State private var showAddRecipeForm = false
     
     init(category: Category?, selectedCategory: Binding<Category?>) {
         self.category = category
@@ -29,37 +30,51 @@ struct CategoryForm: View {
                     TextField("Category Name", text: $categoryTitle)
                 }
                 
-                
-                Section(header: Text("Recipes in Category")) {
-                    if !recipes.isEmpty {
-                        ForEach(recipes.sorted(by: { $0.title < $1.title }), id: \.self) { recipe in
-                            HStack {
-                                Text(recipe.title)
-                                Spacer()
-                                Button {
-                                    removeRecipe(recipe)
-                                } label: {
-                                    Image(systemName: "trash")
-                                        .foregroundStyle(.red)
+                if (category != nil && category?.specialCategory == false) {
+                    Section(header: Text("Recipes in Category")) {
+                        if !recipes.isEmpty {
+                            ForEach(recipes.sorted(by: { $0.title < $1.title }), id: \.self) { recipe in
+                                HStack {
+                                    Text(recipe.title)
+                                    Spacer()
+                                    Button {
+                                        removeRecipe(recipe)
+                                    } label: {
+                                        Image(systemName: "trash")
+                                            .foregroundStyle(.red)
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                
-                if (category != nil && category?.specialCategory == false) {
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            viewModel.deleteCategory(category: category!)
-                            selectedCategory = nil
-                            dismiss()
-                        }) {
-                            Text("Delete Category")
-                                .foregroundStyle(.red)
-                                .font(.title3)
+                    
+                    Section {
+                        Button {
+                            showAddRecipeForm = true
+                        } label: {
+                            HStack {
+                                Spacer()
+                                Label("Add Recipe", systemImage: "plus")
+                                Spacer()
+                            }
+                            .foregroundStyle(.darkGreen)
                         }
-                        Spacer()
+                    }
+                    
+                    Section {
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                viewModel.deleteCategory(category: category!)
+                                selectedCategory = nil
+                                dismiss()
+                            }) {
+                                Text("Delete Category")
+                                    .foregroundStyle(.red)
+                                    .font(.title3)
+                            }
+                            Spacer()
+                        }
                     }
                 }
             }
@@ -90,6 +105,11 @@ struct CategoryForm: View {
                         Image(systemName: "checkmark.rectangle.fill")
                     }
                     .foregroundStyle(.darkGreen)
+                }
+            }
+            .sheet(isPresented: $showAddRecipeForm) {
+                if let category {
+                    AddRecipeToCategoryForm(category: category, recipes: $recipes)
                 }
             }
         }

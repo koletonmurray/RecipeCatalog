@@ -20,17 +20,39 @@ struct RecipeListView: View {
     }
 
     var body: some View {
-        List(selection: $selectedRecipe) {
-            Section(header: Text("Recipes")) {
-                ForEach(recipes.filter {
-                    typedSearchString.isEmpty || $0.searchString.localizedCaseInsensitiveContains(typedSearchString)
+        Group {
+            if (recipes.isEmpty) {
+                VStack {
+                    Spacer()
+                    Text("No recipes tagged")
+                        .font(.title)
+                        .foregroundStyle(.textSecondary)
+                        .fontWeight(.semibold)
+                    Text("Click the pencil icon to add a recipes to this category.")
+                        .font(.title3)
+                        .foregroundStyle(.textSecondary)
+                        .fontWeight(.medium)
+                        .padding(20)
+                    Spacer()
+                    Spacer()
                 }
-                .sorted(by: { $0.title < $1.title }), id: \.self) { recipe in
-                    Text(recipe.title)
+            } else {
+                List(selection: $selectedRecipe) {
+                    Section(header: Text("Recipes")) {
+                        ForEach(recipes
+                            .filter {
+                                typedSearchString.isEmpty || $0.searchString.localizedCaseInsensitiveContains(typedSearchString)
+                            }
+                            .sorted(by: { $0.title < $1.title }), id: \.self) { recipe in
+                                Text(recipe.title)
+                            }
+                    }
                 }
+                .listStyle(.sidebar)
+                .searchable(text: $typedSearchString, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search (recipes, ingredients, etc.)")
+
             }
         }
-        .listStyle(.sidebar)
         .toolbar {
             if (!category.specialCategory) {
                 ToolbarItem(placement: .primaryAction) {
@@ -58,6 +80,5 @@ struct RecipeListView: View {
             CategoryForm(category: category, selectedCategory: $selectedCategory)
         }
         .navigationTitle(category.title)
-        .searchable(text: $typedSearchString, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search (recipes, ingredients, etc.)")
     }
 }

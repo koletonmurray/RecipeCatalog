@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RecipeForm: View {
-    let recipe: Recipe?
+    @State var recipe: Recipe?
     @Environment(\.dismiss) private var dismiss
     @Environment(RecipeViewModel.self) private var viewModel
     @Binding var selectedRecipe: Recipe?
@@ -22,6 +22,8 @@ struct RecipeForm: View {
     @State private var ingredients: String
     @State private var instructions: String
     @State private var additionalNotes: String
+    @State private var categories: [Category]
+    @State private var showAddCategoryForm = false
     
     init(recipe: Recipe?, selectedRecipe: Binding<Recipe?>) {
         self.recipe = recipe
@@ -36,6 +38,7 @@ struct RecipeForm: View {
         _ingredients = State(initialValue: recipe?.ingredients ?? "")
         _instructions = State(initialValue: recipe?.instructions ?? "")
         _additionalNotes = State(initialValue: recipe?.additionalNotes ?? "")
+        _categories = State(initialValue: recipe?.categories ?? [])
     }
     
     var body: some View {
@@ -123,18 +126,53 @@ struct RecipeForm: View {
                 }
                 
                 if (recipe != nil) {
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            viewModel.deleteRecipe(recipe: recipe!)
-                            selectedRecipe = nil
-                            dismiss()
-                        }) {
-                            Text("Delete Recipe")
-                                .foregroundStyle(.red)
-                                .font(.title3)
+                    Section(header: Text("Categories")) {
+                        if !categories.isEmpty {
+                            ForEach(categories
+                                .filter{ !$0.specialCategory }
+                                .sorted(by: { $0.title < $1.title }), id: \.self) { category in
+                                HStack {
+                                    Text(category.title)
+                                    Spacer()
+                                    Button {
+                                        removeCategory(category)
+                                    } label: {
+                                        Image(systemName: "trash")
+                                            .foregroundStyle(.red)
+                                    }
+                                }
+                            }
                         }
-                        Spacer()
+                    }
+                    
+                    Section {
+                        Button {
+                            showAddCategoryForm = true
+                        } label: {
+                            HStack {
+                                Spacer()
+                                Label("Add Category", systemImage: "plus")
+                                    .font(.title3)
+                                Spacer()
+                            }
+                            .foregroundStyle(.darkGreen)
+                        }
+                    }
+                
+                    Section {
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                viewModel.deleteRecipe(recipe: recipe!)
+                                selectedRecipe = nil
+                                dismiss()
+                            }) {
+                                Text("Delete Recipe")
+                                    .foregroundStyle(.red)
+                                    .font(.title3)
+                            }
+                            Spacer()
+                        }
                     }
                 }
             }
@@ -185,6 +223,11 @@ struct RecipeForm: View {
                     .foregroundStyle(.darkGreen)
                 }
             }
+            .sheet(isPresented: $showAddCategoryForm) {
+                if let recipe {
+                    AddCategoryToRecipeForm(recipe: recipe, categories: $categories)
+                }
+            }
         }
     }
     
@@ -210,6 +253,26 @@ struct RecipeForm: View {
                 }
             }
             .padding(.vertical, 5)
+        }
+    }
+    
+    private func removeCategory(_ category: Category) {
+        if let recipe = recipe {
+            categories.removeAll(where: { $0.title == category.title })
+            viewModel.removeRecipeFromCategory(recipe: recipe, category: category)
+            viewModel.updateRecipe(
+                existingRecipe: recipe,
+                recipeName: recipeName,
+                author: author,
+                cookTime: cookTime,
+                servings: servings,
+                difficulty: difficulty,
+                calories: calories,
+                ingredients: ingredients,
+                instructions: instructions,
+                additionalNotes: additionalNotes,
+                isFavorite: isFavorite
+            )
         }
     }
 }

@@ -23,6 +23,7 @@ import SwiftData
     
     // MARK: - Model Access
     
+    private(set) var recipes: [Recipe] = []
     private(set) var categories: [Category] = []
     private(set) var specialCategories: [Category] = []
     
@@ -32,16 +33,27 @@ import SwiftData
         try? modelContext.save()
         specialCategories = fetchSpecialCategories()
         
-        updateAllRecipes()
-        updateFavoriteRecipes()
+        updateCategoryAllRecipes()
+        updateCategoryFavoriteRecipes()
         updateCategories()
+        updateAllRecipes()
     }
     
     // MARK: - User Intents
     
-    func toggleFavorite(for recipe: Recipe) {
-        recipe.isFavorite.toggle()
-        updateFavoriteRecipes()
+    func addRecipeToCategory(recipe: Recipe, category: Category) {
+        category.recipes.append(recipe)
+        recipe.categories.append(category)
+        
+        do {
+            try modelContext.save()
+            print("Recipe successfully added to category!")
+            
+            updateCategories()
+            updateAllRecipes()
+        } catch {
+            print("Failed to add recipe to category: \(error)")
+        }
     }
     
     func createCategory(
@@ -98,8 +110,9 @@ import SwiftData
             print("Failed to save recipe: \(error)")
         }
         
+        updateCategoryAllRecipes()
+        updateCategoryFavoriteRecipes()
         updateAllRecipes()
-        updateFavoriteRecipes()
     }
     
     func deleteCategory(category: Category) {
@@ -122,45 +135,37 @@ import SwiftData
             try modelContext.save()
             print("Recipe successfully deleted!")
             
+            updateCategoryAllRecipes()
+            updateCategoryFavoriteRecipes()
             updateAllRecipes()
-            updateFavoriteRecipes()
         } catch {
             print("Failed to delete recipe: \(error)")
         }
     }
     
-    func removeCategoryFromRecipe(category: Category, recipe: Recipe) {
-        if let index = recipe.categories.firstIndex(of: category) {
-            recipe.categories.remove(at: index)
+    func removeRecipeFromCategory(recipe: Recipe, category: Category) {
+        if let recipeIndex = category.recipes.firstIndex(of: recipe) {
+            category.recipes.remove(at: recipeIndex)
+        }
+        if let categoryIndex = recipe.categories.firstIndex(of: category) {
+            recipe.categories.remove(at: categoryIndex)
+        }
             
-            do {
-                try modelContext.save()
-                print("Recipe successfully removed from category!")
-                
-                updateCategories()
-            } catch {
-                print("Failed to remove recipe from category: \(error)")
-            }
-        } else {
-            print("Failed to remove recipe from category")
+        do {
+            try modelContext.save()
+            print("Recipe successfully removed from category!")
+            
+            updateAllRecipes()
+            updateCategories()
+        } catch {
+            print("Failed to remove recipe from category: \(error)")
         }
     }
     
-    func removeRecipeFromCategory(recipe: Recipe, category: Category) {
-        if let index = category.recipes.firstIndex(of: recipe) {
-            category.recipes.remove(at: index)
-            
-            do {
-                try modelContext.save()
-                print("Recipe successfully removed from category!")
-                
-                updateCategories()
-            } catch {
-                print("Failed to remove recipe from category: \(error)")
-            }
-        } else {
-            print("Failed to remove recipe from category")
-        }
+    func toggleFavorite(for recipe: Recipe) {
+        recipe.isFavorite.toggle()
+        updateCategoryFavoriteRecipes()
+        updateAllRecipes()
     }
     
     func updateCategory(
@@ -213,8 +218,9 @@ import SwiftData
                 print("Failed to update recipe: \(error)")
             }
             
+            updateCategoryAllRecipes()
+            updateCategoryFavoriteRecipes()
             updateAllRecipes()
-            updateFavoriteRecipes()
         }
     }
     
@@ -284,16 +290,20 @@ import SwiftData
     }
     
     func updateAllRecipes() {
-        if let index = specialCategories.firstIndex(where: { $0.title == RecipeAppConstants.recipesKey }) {
-            specialCategories[index].recipes = fetchAllRecipes()
-        }
+        recipes = fetchAllRecipes()
     }
     
     func updateCategories() {
         categories = fetchRegularCategories()
     }
+    
+    func updateCategoryAllRecipes() {
+        if let index = specialCategories.firstIndex(where: { $0.title == RecipeAppConstants.recipesKey }) {
+            specialCategories[index].recipes = fetchAllRecipes()
+        }
+    }
 
-    func updateFavoriteRecipes() {
+    func updateCategoryFavoriteRecipes() {
         if let index = specialCategories.firstIndex(where: { $0.title == RecipeAppConstants.favoritesKey }) {
             specialCategories[index].recipes = fetchFavoriteRecipes()
         }

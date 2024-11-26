@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RecipeView: View {
-    let recipe: Recipe
+    var recipe: Recipe
     @Binding var selectedCategory: Category?
     @Binding var selectedRecipe: Recipe?
     @Environment(RecipeViewModel.self) private var viewModel
@@ -99,6 +99,7 @@ struct RecipeView: View {
                         HStack {
                             let categories = recipe.categories.sorted(by: { $0.title < $1.title })
                             ForEach(categories, id: \.self) { category in
+                                // ChatGPT helped me use .last to properly place the commmas
                                 Text("\(category.title)\(category != categories.last ? ", " : "")")
                                     .foregroundStyle(.textSecondary)
                                     .onTapGesture {

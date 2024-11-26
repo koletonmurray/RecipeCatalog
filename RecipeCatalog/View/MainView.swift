@@ -46,7 +46,7 @@ struct MainView: View {
                 
         } detail: {
             if let recipe = selectedRecipe {
-                RecipeView(recipe: recipe, selectedRecipe: $selectedRecipe)
+                RecipeView(recipe: recipe, selectedCategory: $selectedCategory, selectedRecipe: $selectedRecipe)
             } else {
                 HStack {
                     Text("Select a Recipe")

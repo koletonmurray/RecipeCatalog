@@ -42,9 +42,20 @@ struct RecipeForm: View {
         NavigationView {
             Form {
                 Section(header: Text("Recipe Details")) {
-                    TextField("Recipe Name", text: $recipeName)
-                    
-                    TextField("Author", text: $author)
+                    HStack {
+                        Text("Recipe Name:")
+                            .foregroundStyle(.gray)
+                        Spacer()
+                        TextField("Recipe Name", text: $recipeName)
+                            .frame(maxWidth: 300)
+                    }
+                    HStack {
+                        Text("Author:")
+                            .foregroundStyle(.gray)
+                        Spacer()
+                        TextField("Author", text: $author)
+                            .frame(maxWidth: 300)
+                    }
                     
                     HStack {
                         Text("Total Time:")

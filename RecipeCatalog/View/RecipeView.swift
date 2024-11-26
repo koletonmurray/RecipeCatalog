@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RecipeView: View {
     let recipe: Recipe
+    @Binding var selectedCategory: Category?
     @Binding var selectedRecipe: Recipe?
     @Environment(RecipeViewModel.self) private var viewModel
     @State private var showEditRecipeForm = false
@@ -86,6 +87,34 @@ struct RecipeView: View {
                         .padding(10)
                     }
                 }
+                                
+                VStack(alignment: .leading, spacing: 8) {
+                    Divider()
+                    
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Categories")
+                            .foregroundStyle(.darkGreen)
+                            .fontWeight(.semibold)
+                            .font(.title3)
+                        HStack {
+                            let categories = recipe.categories.sorted(by: { $0.title < $1.title })
+                            ForEach(categories, id: \.self) { category in
+                                Text("\(category.title)\(category != categories.last ? ", " : "")")
+                                    .foregroundStyle(.textSecondary)
+                                    .onTapGesture {
+                                        selectedCategory = category
+                                        selectedRecipe = nil
+                                    }
+                            }
+                            .multilineTextAlignment(.leading)
+                        }
+                    }
+                    .padding(10)
+                    
+                    Divider()
+                }
+                .background(Color.gray.opacity(0.05))
+                
 
                 Spacer(minLength: 20)
             }
@@ -93,20 +122,20 @@ struct RecipeView: View {
             .padding(.horizontal)
             .frame(maxWidth: .infinity)
             .toolbar {
-                ToolbarItem {
-                    Button(action: {
-                        viewModel.toggleFavorite(for: recipe)
-                    }) {
-                        Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
-                            .foregroundStyle(.darkRed)
-                    }
-                }
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: {
                         showEditRecipeForm = true
                     }) {
                         Image(systemName: "highlighter")
                             .foregroundStyle(.primary)
+                    }
+                }
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: {
+                        viewModel.toggleFavorite(for: recipe)
+                    }) {
+                        Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
+                            .foregroundStyle(.darkRed)
                     }
                 }
             }

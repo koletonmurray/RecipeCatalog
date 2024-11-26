@@ -129,6 +129,20 @@ import SwiftData
         }
     }
     
+    func removeRecipeFromCategory(recipe: Recipe, category: Category) {
+        recipe.categories.remove(at: recipe.categories.firstIndex(of: category)!)
+        
+        do {
+            try modelContext.save()
+            print("Recipe successfully removed from category!")
+            
+            updateCategories()
+            updateAllRecipes()
+        } catch {
+            print("Failed to remove recipe from category: \(error)")
+        }
+    }
+    
     func updateCategory(
         existingCategory: Category?,
         categoryTitle: String

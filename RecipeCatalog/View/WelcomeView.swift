@@ -23,6 +23,10 @@ struct WelcomeView: View {
                 .font(.system(size: 48, weight: .bold, design: .rounded))
                 .foregroundStyle(.alwaysDarkGreen)
             
+            Text("your digital recipe book")
+                .font(.system(size: 24, weight: .semibold))
+                .foregroundStyle(.darkPurple)
+            
             Spacer()
             
             Button(action: {
@@ -32,8 +36,7 @@ struct WelcomeView: View {
                     Text("Let's Cook!")
                     Image(systemName: "arrow.right")
                 }
-                    .font(.title)
-                    .fontWeight(.medium)
+                    .font(.system(size: 32, weight: .medium, design: .rounded))
                     .padding()
                     .background(Color.alwaysDarkGreen)
                     .foregroundStyle(.white)
@@ -42,6 +45,11 @@ struct WelcomeView: View {
             .padding(.bottom, 40)
             
             Spacer()
+            
+//            Text("© Koleton Murray")
+//                .font(.system(size: 12, weight: .medium))
+//                .foregroundStyle(.alwaysDarkGreen)
+//                .padding(.bottom, 30)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.alwaysBackgroundTan)

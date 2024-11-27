@@ -23,13 +23,31 @@ struct RecipeListView: View {
         Group {
             if (recipes.isEmpty) {
                 VStack {
-                    Text("No recipes tagged")
-                        .font(.largeTitle)
-                        .foregroundStyle(.gray)
-                        .padding(.bottom, 10)
-                    Text("Click the pencil icon above to add recipes to this category.")
-                        .font(.title3)
-                        .foregroundStyle(.gray)
+                    if (category.title == RecipeAppConstants.favoritesKey) {
+                        Text("No Favorite Recipes")
+                            .font(.largeTitle)
+                            .foregroundStyle(.gray)
+                            .padding(.bottom, 10)
+                        Text("Click the heart icon above a recipe to add it to your favorites.")
+                            .font(.title3)
+                            .foregroundStyle(.gray)
+                    } else if (category.title == RecipeAppConstants.recipesKey) {
+                        Text("No Recipes")
+                            .font(.largeTitle)
+                            .foregroundStyle(.gray)
+                            .padding(.bottom, 10)
+                        Text("Click the file with the plus icon above to add new recipes to your digital recipe book.")
+                            .font(.title3)
+                            .foregroundStyle(.gray)
+                    } else {
+                        Text("No Recipes Tagged")
+                            .font(.largeTitle)
+                            .foregroundStyle(.gray)
+                            .padding(.bottom, 10)
+                        Text("Click the pencil icon above to add recipes to this category.")
+                            .font(.title3)
+                            .foregroundStyle(.gray)
+                    }
                     Spacer()
                 }
                 .padding(30)

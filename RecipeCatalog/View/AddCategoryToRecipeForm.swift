@@ -18,28 +18,29 @@ struct AddCategoryToRecipeForm: View {
         NavigationView {
             VStack(alignment: .leading) {
                 Form {
-                    ForEach(viewModel.categories
-                        .filter { !recipe.categories.contains($0) }
-                        .filter { typedSearchString.isEmpty || $0.title.localizedCaseInsensitiveContains(typedSearchString) }
-                    ) { category in
-                        Button {
-                            viewModel.addRecipeToCategory(recipe: recipe, category: category)
-                            categories.append(category)
-                        } label: {
-                            HStack {
-                                Text(category.title)
-                                    .foregroundStyle(.textGray)
-                                    .fontWeight(.medium)
-                                Spacer()
-                                Image(systemName: "plus")
-                                    .foregroundStyle(.darkGreen)
-                                    .fontWeight(.bold)
+                    Section(header: Text("Available categories")) {
+                        ForEach(viewModel.categories
+                            .filter { !recipe.categories.contains($0) }
+                            .filter { typedSearchString.isEmpty || $0.title.localizedCaseInsensitiveContains(typedSearchString) }
+                        ) { category in
+                            Button {
+                                viewModel.addRecipeToCategory(recipe: recipe, category: category)
+                                categories.append(category)
+                            } label: {
+                                HStack {
+                                    Text(category.title)
+                                        .foregroundStyle(.textGray)
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                    Image(systemName: "plus")
+                                        .foregroundStyle(.darkGreen)
+                                        .fontWeight(.bold)
+                                }
                             }
                         }
                     }
                 }
             }
-            .padding(.top, 15)
             .navigationTitle("Add Categories to \(recipe.title)")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {

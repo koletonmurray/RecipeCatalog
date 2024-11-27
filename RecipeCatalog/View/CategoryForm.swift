@@ -46,16 +46,19 @@ struct CategoryForm: View {
                                     }
                                 }
                             }
+                        } else {
+                            Text("No Recipes")
+                                .font(.title3)
+                                .foregroundStyle(.gray)
                         }
-                    }
-                    
-                    Section {
                         Button {
                             showAddRecipeForm = true
                         } label: {
                             HStack {
                                 Spacer()
                                 Label("Add Recipe", systemImage: "plus")
+                                    .foregroundStyle(.darkGreen)
+                                    .font(.title3)
                                 Spacer()
                             }
                             .foregroundStyle(.darkGreen)
@@ -111,7 +114,7 @@ struct CategoryForm: View {
                     AddRecipeToCategoryForm(category: category, recipes: $recipes)
                 }
             }
-            .alert("Would you like to delete this category \"\(categoryTitle)\"?", isPresented: $showDeleteAlert) {
+            .alert("Would you like to permanently delete this category \"\(categoryTitle)\"?", isPresented: $showDeleteAlert) {
                 Button("Cancel", role: .cancel) {}
                 Button("Delete", role: .destructive) {
                     viewModel.deleteCategory(category: category!)

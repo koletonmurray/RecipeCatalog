@@ -128,7 +128,7 @@ struct RecipeForm: View {
                 
                 if (recipe != nil) {
                     Section(header: Text("Categories")) {
-                        if !categories.isEmpty {
+                        if !categories.filter({ !$0.specialCategory }).isEmpty {
                             ForEach(categories
                                 .filter{ !$0.specialCategory }
                                 .sorted(by: { $0.title < $1.title }), id: \.self) { category in
@@ -143,10 +143,11 @@ struct RecipeForm: View {
                                     }
                                 }
                             }
+                        } else {
+                            Text("No Categories")
+                                .font(.title3)
+                                .foregroundStyle(.gray)
                         }
-                    }
-                    
-                    Section {
                         Button {
                             showAddCategoryForm = true
                         } label: {
@@ -227,7 +228,7 @@ struct RecipeForm: View {
                     AddCategoryToRecipeForm(recipe: recipe, categories: $categories)
                 }
             }
-            .alert("Would you like to delete this recipe \"\(recipeName)\"?", isPresented: $showDeleteAlert) {
+            .alert("Would you like to permanently delete this recipe \"\(recipeName)\"?", isPresented: $showDeleteAlert) {
                 Button("Cancel", role: .cancel) {}
                 Button("Delete", role: .destructive) {
                     viewModel.deleteRecipe(recipe: recipe!)

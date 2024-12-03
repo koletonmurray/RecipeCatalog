@@ -153,7 +153,7 @@ class DataPreloader {
                 dateAdded: Date(),
                 minutesToCook: 75,
                 servings: 8,
-                difficulty: 2,
+                difficulty: 3,
                 caloriesPerServing: 400,
                 ingredients: """
                 - 1 1/2 cups sour cream
@@ -335,7 +335,7 @@ class DataPreloader {
                 dateAdded: Date(),
                 minutesToCook: 20,
                 servings: 24,
-                difficulty: 1,
+                difficulty: 2,
                 caloriesPerServing: 200,
                 ingredients: """
                 - 2 1/4 cups all-purpose flour

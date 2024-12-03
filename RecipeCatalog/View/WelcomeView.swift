@@ -46,10 +46,10 @@ struct WelcomeView: View {
             
             Spacer()
             
-//            Text("© Koleton Murray")
-//                .font(.system(size: 12, weight: .medium))
-//                .foregroundStyle(.alwaysDarkGreen)
-//                .padding(.bottom, 30)
+            Text("© Koleton Murray")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(.alwaysDarkGreen)
+                .padding(.bottom, 30)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.alwaysBackgroundTan)

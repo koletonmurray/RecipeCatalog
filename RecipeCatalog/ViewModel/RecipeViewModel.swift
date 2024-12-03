@@ -85,7 +85,8 @@ import SwiftData
         ingredients: String,
         instructions: String,
         additionalNotes: String,
-        isFavorite: Bool
+        isFavorite: Bool,
+        categories: [Category]
     ) {
         let newRecipe = Recipe(
             title: recipeName,
@@ -108,6 +109,16 @@ import SwiftData
             print("Recipe successfully created!")
         } catch {
             print("Failed to save recipe: \(error)")
+        }
+        
+        if !categories.isEmpty {
+            let modelRecipe = fetchRecipe(by: recipeName)
+            
+            categories.forEach { category in
+                modelRecipe?.categories.append(category)
+            }
+            
+            try? modelContext.save()
         }
         
         updateCategoryAllRecipes()

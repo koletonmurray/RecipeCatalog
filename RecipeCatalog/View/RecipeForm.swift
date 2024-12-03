@@ -126,12 +126,12 @@ struct RecipeForm: View {
                         .frame(minHeight: 100)
                 }
                 
-                if (recipe != nil) {
-                    Section(header: Text("Categories")) {
-                        if !categories.filter({ !$0.specialCategory }).isEmpty {
-                            ForEach(categories
-                                .filter{ !$0.specialCategory }
-                                .sorted(by: { $0.title < $1.title }), id: \.self) { category in
+
+                Section(header: Text("Categories")) {
+                    if !categories.filter({ !$0.specialCategory }).isEmpty {
+                        ForEach(categories
+                            .filter{ !$0.specialCategory }
+                            .sorted(by: { $0.title < $1.title }), id: \.self) { category in
                                 HStack {
                                     Text(category.title)
                                     Spacer()
@@ -143,24 +143,25 @@ struct RecipeForm: View {
                                     }
                                 }
                             }
-                        } else {
-                            Text("No Categories")
-                                .font(.title3)
-                                .foregroundStyle(.gray)
-                        }
-                        Button {
-                            showAddCategoryForm = true
-                        } label: {
-                            HStack {
-                                Spacer()
-                                Label("Add Category", systemImage: "plus")
-                                    .font(.title3)
-                                Spacer()
-                            }
-                            .foregroundStyle(.darkGreen)
-                        }
+                    } else {
+                        Text("No Categories")
+                            .font(.title3)
+                            .foregroundStyle(.gray)
                     }
+                    Button {
+                        showAddCategoryForm = true
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Label("Add Category", systemImage: "plus")
+                                .font(.title3)
+                            Spacer()
+                        }
+                        .foregroundStyle(.darkGreen)
+                    }
+                }
                 
+                if (recipe != nil) {
                     Section {
                         HStack {
                             Spacer()
@@ -213,7 +214,8 @@ struct RecipeForm: View {
                                 ingredients: ingredients,
                                 instructions: instructions,
                                 additionalNotes: additionalNotes,
-                                isFavorite: isFavorite
+                                isFavorite: isFavorite,
+                                categories: categories
                             )
                         }
                         dismiss()
@@ -224,9 +226,7 @@ struct RecipeForm: View {
                 }
             }
             .sheet(isPresented: $showAddCategoryForm) {
-                if let recipe {
-                    AddCategoryToRecipeForm(recipe: recipe, categories: $categories)
-                }
+                AddCategoryToRecipeForm(recipe: recipe, categories: $categories)
             }
             .alert("Would you like to permanently delete this recipe \"\(recipeName)\"?", isPresented: $showDeleteAlert) {
                 Button("Cancel", role: .cancel) {}
@@ -266,8 +266,9 @@ struct RecipeForm: View {
     }
     
     private func removeCategory(_ category: Category) {
+        categories.removeAll(where: { $0.title == category.title })
+        
         if let recipe = recipe {
-            categories.removeAll(where: { $0.title == category.title })
             viewModel.removeRecipeFromCategory(recipe: recipe, category: category)
             viewModel.updateRecipe(
                 existingRecipe: recipe,

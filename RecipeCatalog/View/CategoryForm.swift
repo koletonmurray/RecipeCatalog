@@ -31,40 +31,40 @@ struct CategoryForm: View {
                     TextField("Category Name", text: $categoryTitle)
                 }
                 
-                if (category != nil && category?.specialCategory == false) {
-                    Section(header: Text("Recipes in Category")) {
-                        if !recipes.isEmpty {
-                            ForEach(recipes.sorted(by: { $0.title < $1.title }), id: \.self) { recipe in
-                                HStack {
-                                    Text(recipe.title)
-                                    Spacer()
-                                    Button {
-                                        removeRecipe(recipe)
-                                    } label: {
-                                        Image(systemName: "trash")
-                                            .foregroundStyle(.red)
-                                    }
+                Section(header: Text("Recipes in Category")) {
+                    if !recipes.isEmpty {
+                        ForEach(recipes.sorted(by: { $0.title < $1.title }), id: \.self) { recipe in
+                            HStack {
+                                Text(recipe.title)
+                                Spacer()
+                                Button {
+                                    removeRecipe(recipe)
+                                } label: {
+                                    Image(systemName: "trash")
+                                        .foregroundStyle(.red)
                                 }
                             }
-                        } else {
-                            Text("No Recipes")
-                                .font(.title3)
-                                .foregroundStyle(.gray)
                         }
-                        Button {
-                            showAddRecipeForm = true
-                        } label: {
-                            HStack {
-                                Spacer()
-                                Label("Add Recipe", systemImage: "plus")
-                                    .foregroundStyle(.darkGreen)
-                                    .font(.title3)
-                                Spacer()
-                            }
-                            .foregroundStyle(.darkGreen)
-                        }
+                    } else {
+                        Text("No Recipes")
+                            .font(.title3)
+                            .foregroundStyle(.gray)
                     }
+                    Button {
+                        showAddRecipeForm = true
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Label("Add Recipe", systemImage: "plus")
+                                .foregroundStyle(.darkGreen)
+                                .font(.title3)
+                            Spacer()
+                        }
+                        .foregroundStyle(.darkGreen)
+                    }
+                }
                     
+                if (category != nil && category?.specialCategory == false) {
                     Section {
                         HStack {
                             Spacer()
@@ -99,7 +99,8 @@ struct CategoryForm: View {
                             )
                         } else {
                             viewModel.createCategory(
-                                categoryTitle: categoryTitle
+                                categoryTitle: categoryTitle,
+                                recipes: recipes
                             )
                         }
                         dismiss()
@@ -110,9 +111,7 @@ struct CategoryForm: View {
                 }
             }
             .sheet(isPresented: $showAddRecipeForm) {
-                if let category {
-                    AddRecipeToCategoryForm(category: category, recipes: $recipes)
-                }
+                AddRecipeToCategoryForm(category: category, recipes: $recipes)
             }
             .alert("Would you like to permanently delete this category \"\(categoryTitle)\"?", isPresented: $showDeleteAlert) {
                 Button("Cancel", role: .cancel) {}
@@ -128,9 +127,13 @@ struct CategoryForm: View {
     }
     
     private func removeRecipe(_ recipe: Recipe) {
+        recipes.removeAll(where: { $0.title == recipe.title })
+        
         if let category = category {
-            recipes.removeAll(where: { $0.title == recipe.title })
-            viewModel.removeRecipeFromCategory(recipe: recipe, category: category)
+            viewModel.removeRecipeFromCategory(
+                recipe: recipe,
+                category: category
+            )
         }
     }
 }

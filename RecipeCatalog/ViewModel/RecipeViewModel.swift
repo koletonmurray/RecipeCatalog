@@ -57,7 +57,8 @@ import SwiftData
     }
     
     func createCategory(
-        categoryTitle: String
+        categoryTitle: String,
+        recipes: [Recipe]
     ) {
         let newCategory = Category(
             title: categoryTitle
@@ -70,6 +71,14 @@ import SwiftData
             print("Category successfully created!")
         } catch {
             print("Failed to save category: \(error)")
+        }
+        
+        if !recipes.isEmpty {
+            let modelCategory = fetchCategory(by: categoryTitle)
+            
+            recipes.forEach { recipe in
+                modelCategory?.recipes.append(recipe)
+            }
         }
         
         updateCategories()
@@ -246,6 +255,18 @@ import SwiftData
         } catch {
             print("Failed to fetch all recipes: \(error)")
             return []
+        }
+    }
+    
+    func fetchCategory(by name: String) -> Category? {
+        do {
+            let descriptorCategory = FetchDescriptor<Category>(
+                predicate: #Predicate { $0.title == name }
+            )
+            return try modelContext.fetch(descriptorCategory).first
+        } catch {
+            print("Failed to fetch category: \(error)")
+            return nil
         }
     }
     

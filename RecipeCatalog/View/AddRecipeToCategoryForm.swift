@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AddRecipeToCategoryForm: View {
-    let category: Category
+    @State var category: Category?
     @Binding var recipes: [Recipe]
     @Environment(\.dismiss) private var dismiss
     @Environment(RecipeViewModel.self) private var viewModel
@@ -20,11 +20,13 @@ struct AddRecipeToCategoryForm: View {
                 Form {
                     Section(header: Text("Available recipes")) {
                         ForEach(viewModel.recipes
-                            .filter { !category.recipes.contains($0) }
+                            .filter { !recipes.contains($0) }
                             .filter { typedSearchString.isEmpty || $0.searchString.localizedCaseInsensitiveContains(typedSearchString) }
                         ) { recipe in
                             Button {
-                                viewModel.addRecipeToCategory(recipe: recipe, category: category)
+                                if let category = category {
+                                    viewModel.addRecipeToCategory(recipe: recipe, category: category)
+                                }
                                 recipes.append(recipe)
                             } label: {
                                 HStack {
@@ -41,8 +43,7 @@ struct AddRecipeToCategoryForm: View {
                     }
                 }
             }
-            //.padding(.top, 15)
-            .navigationTitle("Add Recipes to \(category.title)")
+            .navigationTitle("Add Recipes to \(category?.title ?? "Category")")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {

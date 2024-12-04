@@ -269,7 +269,10 @@ struct RecipeForm: View {
         categories.removeAll(where: { $0.title == category.title })
         
         if let recipe = recipe {
-            viewModel.removeRecipeFromCategory(recipe: recipe, category: category)
+            viewModel.removeRecipeFromCategory(
+                recipe: recipe,
+                category: category
+            )
             viewModel.updateRecipe(
                 existingRecipe: recipe,
                 recipeName: recipeName,
